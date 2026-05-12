@@ -10,10 +10,6 @@ from common.lang_utils import get_prompt_for_language
 from common.misc_utils import get_logger
 from common.settings import settings
 from common.retry_utils import retry_on_transient_error
-from chatbot.settings import settings as chatbot_settings
-from chatbot.conversation_utils import truncate_history_by_tokens
-from summarize.settings import settings as summarize_settings
-from digitize.settings import settings as digitize_settings
 import common.misc_utils as misc_utils
 
 logger = get_logger("LLM")
@@ -177,6 +173,10 @@ def query_vllm_payload(
     previous_messages: list | None = None,
     rephrased_query: str | None = None,
 ):
+    # Lazy import to avoid circular dependencies
+    from chatbot.settings import settings as chatbot_settings
+    from chatbot.conversation_utils import truncate_history_by_tokens
+    
     context = "\n\n".join([doc.get("page_content") for doc in documents])
 
     # Use conversational mode if enabled AND language is English, otherwise use legacy prompts
