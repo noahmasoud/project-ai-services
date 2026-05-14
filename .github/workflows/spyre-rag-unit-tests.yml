@@ -1,34 +1,48 @@
-name: Spyre RAG Unit Tests
+name: Services Unit Tests
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - 'spyre-rag/**'
-      - '.github/workflows/spyre-rag-unit-tests.yaml'
+      - 'services/**'
+      - '.github/workflows/spyre-rag-unit-tests.yml'
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-ppc64le
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-      
+
       - name: Set up Python 3.12
-        uses: actions/setup-python@v6
+        uses: IBM/setup-python-pz@291287e36d7c893a50c857d8bc014d67edd58ada
         with:
           python-version: '3.12'
-          cache: 'pip'
+
       
-      - name: Install test dependencies
+      - name: Install digitize test dependencies
         run: |
-          pip install -r requirements-test.txt
-        working-directory: spyre-rag
+          pip install -r requirements-test.txt \
+          --extra-index-url https://wheels.developerfirst.ibm.com/ppc64le/linux \
+          --prefer-binary
+        working-directory: services/digitize
       
-      - name: Run tests with pytest
+      - name: Run digitize service tests
         run: |
           pytest tests/ -v
-        working-directory: spyre-rag
+        working-directory: services/digitize
+      
+      - name: Install chatbot test dependencies
+        run: |
+          pip install -r requirements-test.txt \
+          --extra-index-url https://wheels.developerfirst.ibm.com/ppc64le/linux \
+          --prefer-binary
+        working-directory: services/chatbot
+      
+      - name: Run chatbot service tests
+        run: |
+          pytest tests/ -v
+        working-directory: services/chatbot
 

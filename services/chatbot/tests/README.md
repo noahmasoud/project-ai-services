@@ -1,6 +1,6 @@
-# Spyre-RAG Chatbot Testing Guide
+# Chatbot Service Testing Guide
 
-This comprehensive guide covers the setup, configuration, and execution of tests for the spyre-rag chatbot application.
+This comprehensive guide covers the setup, configuration, and execution of tests for the chatbot service.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This comprehensive guide covers the setup, configuration, and execution of tests
 
 ## Overview
 
-The test suite provides comprehensive coverage for the chatbot application (`spyre-rag/src/chatbot/app.py`), including:
+The test suite provides comprehensive coverage for the chatbot application (`services/chatbot/app.py`), including:
 
 - **Unit Tests**: Test individual components in isolation
 - **Integration Tests**: Test interactions between components
@@ -28,16 +28,15 @@ The test suite provides comprehensive coverage for the chatbot application (`spy
 ## Test Structure
 
 ```
-spyre-rag/
-├── src/
-│   └── chatbot/
-│       └── app.py                    # Application code
-├── tests/
-│   ├── __init__.py
-│   ├── conftest.py                   # Shared fixtures and configuration
-│   ├── TESTING_PLAN.md               # Detailed testing plan
-│   ├── README.md                     # This file
-│   └── unit/
+services/
+└── chatbot/
+    ├── app.py                        # Application code
+    └── tests/
+        ├── __init__.py
+        ├── conftest.py               # Shared fixtures and configuration
+        ├── TESTING_PLAN.md           # Detailed testing plan
+        ├── README.md                 # This file
+        └── unit/
 │       ├── __init__.py
 │       └── chatbot/
 │           ├── __init__.py
@@ -70,8 +69,8 @@ The chatbot application requires:
 ### Step 1: Set Up Python Environment
 
 ```bash
-# Navigate to the spyre-rag directory
-cd spyre-rag
+# Navigate to the chatbot service directory
+cd services/chatbot
 
 # Create a virtual environment (recommended)
 python -m venv venv

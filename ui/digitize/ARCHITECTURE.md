@@ -27,7 +27,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │              Digitize Service Backend (Port 4000)            │
 │  ┌───────────────────────────────────────────────────────┐  │
-│  │  FastAPI Application (spyre-rag/src/digitize/app.py) │  │
+│  │  FastAPI Application (services/digitize/app.py)      │  │
 │  │  ┌─────────────────────────────────────────────────┐ │  │
 │  │  │  Endpoints:                                      │ │  │
 │  │  │  - POST /v1/documents (upload)                   │ │  │

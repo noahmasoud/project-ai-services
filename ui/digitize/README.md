@@ -1,6 +1,6 @@
 # Digitize Service UI
 
-A modern React application built with IBM Carbon Design System to provide a user interface for the Digitize Service from spyre-rag.
+A modern React application built with IBM Carbon Design System to provide a user interface for the Digitize Service.
 
 ## Features
 
@@ -12,7 +12,7 @@ A modern React application built with IBM Carbon Design System to provide a user
 ## Prerequisites
 
 - Node.js 18+ and npm
-- Running instance of the Digitize Service backend (spyre-rag/src/digitize/app.py) on port 4000
+- Running instance of the Digitize Service backend (services/digitize/app.py) on port 4000
 
 ## Installation
 

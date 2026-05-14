@@ -10,9 +10,9 @@
 
 2. **Backend Service**: The Digitize Service backend must be running
    ```bash
-   # From the spyre-rag directory
-   cd spyre-rag/src
-   python -m digitize.app
+   # From the project root directory
+   cd services/digitize
+   python -m app
    ```
    The backend should be running on `http://localhost:4000`
 

@@ -1,4 +1,4 @@
-# spyre-rag/src/similarity/test_similarity_search.py
+# services/similarity/test_similarity_search.py
 
 import pytest
 from unittest.mock import Mock, patch, MagicMock
