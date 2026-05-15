@@ -251,6 +251,15 @@ class RAGConfig(BaseSettings):
             return 3
         return v
 
+    @field_validator('prompt_template_token_count')
+    @classmethod
+    def validate_prompt_template_token_count(cls, v):
+        """Validate prompt_template_token_count with warning fallback."""
+        if not isinstance(v, int):
+            logger.warning(f"Setting prompt_template_token_count to default '250' as it is missing in the settings")
+            return 250
+        return v
+
 class Settings(BaseSettings):
     common: CommonSettings = Field(default_factory=CommonSettings)
     chatbot: RAGConfig = Field(default_factory=RAGConfig)

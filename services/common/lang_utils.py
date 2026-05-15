@@ -9,22 +9,24 @@ _language_detector = None
 lang_en = "EN"
 lang_de = "DE"
 
-def get_prompt_for_language(lang: str) -> str:
+def get_prompt_for_language(lang: str, prompt_en: str, prompt_de: str) -> str:
     """
     Get the appropriate prompt template based on language code.
     This is extensible to more languages easily.
 
     Args:
         lang: Language code (EN, DE, etc.)
+        prompt_en: English prompt template
+        prompt_de: German prompt template
 
     Returns:
         The appropriate prompt template for the language
     """
     prompt_map = {
-        lang_de: settings.prompts.query_vllm_stream_de_prompt,
-        lang_en: settings.prompts.query_vllm_stream_prompt
+        lang_de: prompt_de,
+        lang_en: prompt_en
     }
-    return prompt_map.get(lang, settings.prompts.query_vllm_stream_prompt)
+    return prompt_map.get(lang, prompt_en)
 
 max_tokens_map = {
     lang_en: settings.llm.max_tokens,

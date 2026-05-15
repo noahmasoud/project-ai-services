@@ -276,7 +276,11 @@ def query_vllm_payload(
         logger.debug(f"Truncated Context: {context}")
 
         # Get the appropriate prompt template based on language and format it
-        prompt_template = get_prompt_for_language(lang)
+        prompt_template = get_prompt_for_language(
+            lang,
+            chatbot_settings.chatbot.query_vllm_stream_prompt,
+            chatbot_settings.chatbot.query_vllm_stream_de_prompt
+        )
         prompt = prompt_template.format(context=context, question=question)
         
         message_array = [
