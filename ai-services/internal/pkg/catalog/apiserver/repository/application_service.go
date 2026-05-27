@@ -578,12 +578,7 @@ func (s *ApplicationService) DeleteApplication(ctx context.Context, id uuid.UUID
 		return nil, err
 	}
 
-	for _, svc := range app.Services {
-		if err := s.serviceRepo.UpdateStatus(ctx, svc.ID, models.ApplicationStatusDeleting); err != nil {
-			return nil, fmt.Errorf("failed to set service %s to deleting: %w", svc.ID, err)
-		}
-	}
-
+	// Service status update deferred until later
 	go s.performDeletion(context.Background(), id, app.Services, force)
 
 	return &DeleteApplicationResponse{
