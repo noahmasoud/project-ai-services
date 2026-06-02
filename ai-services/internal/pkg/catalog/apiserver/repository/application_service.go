@@ -664,6 +664,7 @@ func (s *ApplicationService) performDeletion(ctx context.Context, appID uuid.UUI
 		})
 		if err != nil {
 			logger.Errorf("failed to list pods for service %s: %s", svc.ID, err)
+
 			continue
 		}
 
