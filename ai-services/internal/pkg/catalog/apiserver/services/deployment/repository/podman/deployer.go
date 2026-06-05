@@ -1157,7 +1157,7 @@ func (d *PodmanDeployer) getEnvParamsForComponent(podSpec *podmodels.PodSpec, pl
 func (d *PodmanDeployer) registerApplicationRoutes(ctx context.Context, plan *DeploymentPlan) error {
 	logger.Infof("Registering routes for application '%s'\n", plan.ApplicationName)
 
-	adminURL, hostIP, httpsPort, err := d.getCaddyConfiguration()
+	adminURL, domainSuffix, httpsPort, err := d.getCaddyConfiguration()
 	if err != nil {
 		return err
 	}
@@ -1169,7 +1169,7 @@ func (d *PodmanDeployer) registerApplicationRoutes(ctx context.Context, plan *De
 			continue
 		}
 
-		if err := d.registerServiceRoutes(ctx, svc, adminURL, hostIP, httpsPort, &registrationErrors); err != nil {
+		if err := d.registerServiceRoutes(ctx, svc, adminURL, domainSuffix, httpsPort, &registrationErrors); err != nil {
 			registrationErrors = append(registrationErrors, err)
 		}
 	}
@@ -1190,14 +1190,16 @@ func (d *PodmanDeployer) getCaddyConfiguration() (string, string, string, error)
 		return "", "", "", fmt.Errorf("CADDY_ADMIN_URL environment variable not set")
 	}
 
-	hostIP := utils.GetEnv("HOST_IP", "")
-	if hostIP == "" {
-		return "", "", "", fmt.Errorf("HOST_IP environment variable not set")
+	// Get domain suffix from env var (set during catalog configure)
+	// This is pre-computed: certDomain OR customDomain OR hostIP.nip.io
+	domainSuffix := utils.GetEnv("DOMAIN_SUFFIX", "")
+	if domainSuffix == "" {
+		return "", "", "", fmt.Errorf("DOMAIN_SUFFIX environment variable not set")
 	}
 
 	httpsPort := utils.GetEnv("CADDY_HTTPS_PORT", catalogconstants.DefaultHTTPSPort)
 
-	return adminURL, hostIP, httpsPort, nil
+	return adminURL, domainSuffix, httpsPort, nil
 }
 
 // registerServiceRoutes registers routes for a single service and updates its endpoints in the database.
@@ -1205,7 +1207,7 @@ func (d *PodmanDeployer) registerServiceRoutes(
 	ctx context.Context,
 	svc *ServicePlan,
 	adminURL string,
-	hostIP string,
+	domainSuffix string,
 	httpsPort string,
 	registrationErrors *[]error,
 ) error {
@@ -1219,7 +1221,7 @@ func (d *PodmanDeployer) registerServiceRoutes(
 			constants.CaddyServerName,
 			routesAnnotation,
 			adminURL,
-			hostIP,
+			domainSuffix,
 			podName,
 		)
 		if err != nil {

@@ -28,34 +28,11 @@ func GetCaddyAdminPort(rt runtime.Runtime, podName string) (string, error) {
 	return "", fmt.Errorf("admin port mapping not found in pod ports")
 }
 
-// DomainConfig holds configuration for domain generation.
-type DomainConfig struct {
-	HostIP       string // Used for nip.io-based domains with self-signed certificates
-	CustomDomain string // For custom domain support (future)
-	CertPath     string // For extracting domain from certificates (future)
-}
-
-// BuildRouteDomain generates a domain name for a route.
-// Currently uses nip.io for self-signed certificates.
-// Future: Support custom domains and certificate-based domain extraction.
-func BuildRouteDomain(subdomain string, config DomainConfig) string {
-	// Future: Check for custom domain or certificate-based domain
-	// if config.CustomDomain != "" {
-	//     return fmt.Sprintf("%s.%s", subdomain, config.CustomDomain)
-	// }
-	// if config.CertPath != "" {
-	//     domain := extractDomainFromCert(config.CertPath)
-	//     return fmt.Sprintf("%s.%s", subdomain, domain)
-	// }
-
-	// Current: nip.io for self-signed certificates
-	return fmt.Sprintf("%s.%s.nip.io", subdomain, config.HostIP)
-}
-
 // BuildRoutesFromAnnotation parses a routes annotation string and builds Route objects.
-// The annotation format is: "port:subdomain:type, port:subdomain:type, ...".
-// Example: "8081:catalog-ui:ui, 8080:catalog-api:api".
-func BuildRoutesFromAnnotation(routesAnnotation, hostIP, podName string) ([]Route, error) {
+// The annotation format is: "port:subdomain, port:subdomain, ...".
+// Example: "8081:catalog-ui, 8080:catalog-api".
+// The domainSuffix is pre-computed (e.g., "example.com" or "192.168.1.100.nip.io").
+func BuildRoutesFromAnnotation(routesAnnotation, domainSuffix, podName string) ([]Route, error) {
 	if routesAnnotation == "" {
 		return nil, nil
 	}
@@ -63,13 +40,7 @@ func BuildRoutesFromAnnotation(routesAnnotation, hostIP, podName string) ([]Rout
 	routes := []Route{}
 	const expectedParts = 3
 
-	// Prepare domain configuration
-	domainConfig := DomainConfig{
-		HostIP: hostIP,
-		// Future: Add CustomDomain and CertPath from flags/config
-	}
-
-	// Parse routes annotation (format: "port:subdomain:type, port:subdomain:type, ...")
+	// Parse routes annotation (format: "port:subdomain, port:subdomain, ...")
 	for _, r := range strings.Split(routesAnnotation, ",") {
 		r = strings.TrimSpace(r)
 		if r == "" {
@@ -97,9 +68,10 @@ func BuildRoutesFromAnnotation(routesAnnotation, hostIP, podName string) ([]Rout
 		}
 
 		// Build route - use pod name as upstream since containers are in the same pod
+		// Domain is simply: subdomain.domainSuffix
 		route := Route{
 			ID:       fmt.Sprintf("%s--%s", podName, subdomain),
-			Domain:   BuildRouteDomain(subdomain, domainConfig),
+			Domain:   fmt.Sprintf("%s.%s", subdomain, domainSuffix),
 			Upstream: fmt.Sprintf("%s:%s", podName, port),
 			Terminal: true,
 			Type:     routeType,
