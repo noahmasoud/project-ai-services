@@ -318,7 +318,7 @@ description=(
       "| `text` | string | Yes | Plain text content to summarize |\n"
       "| `level` | string | No | Abstraction level: 'brief', 'standard' (default), or 'detailed' |\n"
       "| `length` | integer | No | (Legacy) Desired summary length in words |\n"
-      "| `stream` | boolean | No | Stream the summary as it is generated, default False |\n\n"
+      "| `stream` | boolean | No | Stream the summary as it is generated, default False. If Not supported via MCP, default False. |\n\n"
       "**Note:** Use either `level` (recommended) or `length` (legacy), not both.\n\n"
       "**Example with level:**\n"
       "```bash\n"
@@ -343,7 +343,7 @@ description=(
       "| `file` | file | Conditional | `.txt` or `.pdf` file to summarize |\n"
       "| `level` | string | No | Abstraction level: 'brief', 'standard' (default), or 'detailed' |\n"
       "| `length` | integer | No | (Legacy) Desired summary length in words |\n"
-      "| `stream` | boolean | No | Stream the summary as it is generated, default False |\n\n"
+      "| `stream` | boolean | No | Stream the summary as it is generated, default False. Not supported via MCP -- leave false. |\n\n"
       "**Note:** Use either `level` (recommended) or `length` (legacy), not both.\n\n"
       "**Example with level:**\n"
       "```bash\n"
@@ -1205,9 +1205,11 @@ async def get_job_details(job_id: str):
     },
     summary="Get summarization result",
     description=(
-        "Retrieve the completed summary and result metadata for a job.\n\n"
-        "Returns 202 Accepted if the job is still in progress.\n"
-        "Returns 404 if the job doesn't exist or result is not available."
+        "Retrieve the summary result for a job.\n\n"
+        "202 = still running (status: accepted or in_progress) -- not an error, "
+        "poll again in 5 seconds.\n"
+        "200 = done, result included.\n"
+        "404 = job not found."
     ),
     response_description="Summarization result with usage statistics",
     tags=["jobs"],
