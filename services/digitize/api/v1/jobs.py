@@ -368,7 +368,12 @@ async def list_jobs(
     "/{job_id}",
     responses={404: http_error_responses[404], 500: http_error_responses[500]},
     summary="Get job by ID",
-    description="Retrieve detailed status and progress information for a specific job.",
+    description=(
+        "Retrieve job status. Always returns 200, check the status field "
+        "(accepted, in_progress, completed, failed), not the HTTP status. "
+        "Poll every 5 seconds until complete or failed. stats.completed / "
+        "stats.total_documents show progress."
+    ),
     response_description="Detailed job information including document statuses and statistics",
 )
 async def get_job(job_id: str):
